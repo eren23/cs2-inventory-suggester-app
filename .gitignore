@@ -1,0 +1,10 @@
+node_modules
+__pycache__
+.env
+replicate_stuff
+.ipynb_checkpoints
+.ipynb
+downloaded_images
+hf_dataset
+files
+legacy

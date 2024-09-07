@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - CS:GO Items Finder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <section class="hero is-dark is-bold">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title is-1">Login</h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <form id="loginForm" class="box">
+                <div class="field">
+                    <label class="label" for="username">Username</label>
+                    <div class="control">
+                        <input class="input" type="text" id="username" placeholder="Enter your username" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label" for="password">Password</label>
+                    <div class="control">
+                        <input class="input" type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-link" type="submit">Login</button>
+                    </div>
+                </div>
+                <p>Don't have an account? <a href="register.html">Register here</a>.</p>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        let useLocalMode = true;
+    
+        let serverUrl = 'http://cloudserver:8000';
+
+        if (useLocalMode) {
+            serverUrl = 'http://localhost:8000';
+        }
+        window.onload = function() {
+            const authToken = localStorage.getItem('authToken');
+            if (authToken) {
+                // Verify the token with the backend
+                axios.get(`${serverUrl}/check_login`, {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    }
+                })
+                .then(function (response) {
+                    // Token is valid, redirect to index.html
+                    window.location.href = 'index.html';
+                })
+                .catch(function (error) {
+                    // Token is invalid, remove it from localStorage
+                    localStorage.removeItem('authToken');
+                });
+            }
+        };
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const params = new URLSearchParams();
+            params.append('username', username);
+            params.append('password', password);
+
+            axios.post(`${serverUrl}/token`, params, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(function (response) {
+                const token = response.data.access_token;
+                localStorage.setItem('authToken', token);
+                window.location.href = 'index.html';
+            })
+            .catch(function (error) {
+                console.error('Login failed:', error.response ? error.response.data : error);
+                alert('Login failed. Please check your credentials.');
+            });
+        });
+    </script>
+</body>
+</html>

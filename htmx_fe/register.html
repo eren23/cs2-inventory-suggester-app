@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - CS:GO Items Finder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <section class="hero is-dark is-bold">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title is-1">Register</h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <form id="registerForm" class="box">
+                <div class="field">
+                    <label class="label" for="email">Email</label>
+                    <div class="control">
+                        <input class="input" type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label" for="password">Password</label>
+                    <div class="control">
+                        <input class="input" type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-link" type="submit">Register</button>
+                    </div>
+                </div>
+                <p>Already have an account? <a href="login.html">Login here</a>.</p>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        let useLocalMode = true;
+    
+        let serverUrl = 'http://cloudserver:8000';
+
+        if (useLocalMode) {
+            serverUrl = 'http://localhost:8000';
+        }
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+    
+            axios.post(`${serverUrl}/register`, {
+                email: email,
+                password: password
+            })
+            .then(function (response) {
+                alert('Registration successful. Please login.');
+                window.location.href = 'login.html';
+            })
+            .catch(function (error) {
+                console.error('Registration failed:', error.response ? error.response.data : error);
+                alert('Registration failed. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>
